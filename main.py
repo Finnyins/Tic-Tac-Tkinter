@@ -191,7 +191,7 @@ def generateboard(s, mode):  # function that is used to collect the user's input
         board.rowconfigure(x, weight=1)
         board.columnconfigure(x, weight=1)
     for x in range(0, (s-1)):
-
+        pass
     global board
     board = board
 

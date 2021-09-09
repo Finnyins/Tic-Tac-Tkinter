@@ -6,7 +6,6 @@ from tkinter import *
 
 
 def clearscreen():
-    menu.destroy()
     _list = mw.winfo_children()
     for item in _list:
         if item.winfo_children():
@@ -197,6 +196,10 @@ def generateboard(l, h):  # function that is used to collect the user's input an
 
 def generateboardvals():  # function that gathers the player's input to generate the board with.
     clearscreen()
+    global menu
+    menu.destroy()
+    global x
+    global y
     menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
     for x in range(0, 3):
         menu.rowconfigure(x, weight=1)
@@ -204,8 +207,17 @@ def generateboardvals():  # function that gathers the player's input to generate
     header.pack(side="top", expand=False)
     menu.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)
+    titletext.destroy()
     text = Label(header, text="Select Board Size", font=("Franklin Gothic", 25), bg="white", fg="snow4")
     text.pack(side="bottom", anchor="center", pady=(y / 5))
+    size1 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="3x3")
+    size2 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="5x5")
+    size3 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="7x7")
+    size4 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="9x9")
+    size1.grid(row=0, column=1, sticky=NSEW, pady=(y / 100))
+    size2.grid(row=0, column=2, sticky=NSEW, pady=(y / 100))
+    size3.grid(row=1, column=1, sticky=NSEW, pady=(y / 100))
+    size4.grid(row=1, column=2, sticky=NSEW, pady=(y / 100))
 
 
 # main menu segment. Nothing particularly special here.
@@ -225,6 +237,7 @@ global y
 x = mw.winfo_screenwidth()
 y = mw.winfo_screenheight()
 header = Frame(mw, bg="lightsteelblue4", width=x, height=(y * 0.15))
+global menu
 menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
 footer = Frame(mw, bg="grey40", width=x, height=(y * 0.15))
 for x in range(0, 3):
@@ -238,7 +251,7 @@ footer.config(bg="white")
 menu.update()
 titletext = Label(header, bg="white", fg="snow4", text="Tic-Tac-Tkinter", font=("Franklin Gothic", 25))
 titletext.pack(side="bottom", anchor="center", pady=(y/5))
-single = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Singleplayer")
+single = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Singleplayer", command=generateboardvals)
 multi = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Multiplayer")
 options = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Options")
 quit = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Quit Game")

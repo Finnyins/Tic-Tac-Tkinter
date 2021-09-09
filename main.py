@@ -183,15 +183,18 @@ def playgame(
         game = victory_for(board, "O")
 
 
-def generateboard(l, h):  # function that is used to collect the user's input and generate a game board using it
-    board = []
-    boardlength = []
-    for x in range(0, h):
-        for x in range(0, l):
-            boardlength.append(str(x))
-        board.append(boardlength)
-        boardlength = []
-    return board
+def generateboard(s, mode):  # function that is used to collect the user's input and generate a game board using it
+    global x
+    global y
+    board = Frame(mw, width=x, height=(y * 0.6))
+    for x in range(0, (s-1)):
+        board.rowconfigure(x, weight=1)
+        board.columnconfigure(x, weight=1)
+    for x in range(0, (s-1)):
+
+    global board
+    board = board
+
 
 
 def generateboardvals(mode):  # function that gathers the player's input to generate the board with.
@@ -210,10 +213,10 @@ def generateboardvals(mode):  # function that gathers the player's input to gene
     titletext.destroy()
     text = Label(header, text="Select Board Size", font=("Franklin Gothic", 25), bg="white", fg="snow4")
     text.pack(side="bottom", anchor="center", pady=(y / 5))
-    size1 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="3x3")
-    size2 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="5x5")
-    size3 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="7x7")
-    size4 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="9x9")
+    size1 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="3x3", command=lambda: generateboard(3, mode))
+    size2 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="5x5", command=lambda: generateboard(5, mode))
+    size3 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="7x7", command=lambda: generateboard(7, mode))
+    size4 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="9x9", command=lambda: generateboard(9, mode))
     size1.grid(row=0, column=1, sticky=NSEW, pady=(y / 100))
     size2.grid(row=0, column=2, sticky=NSEW, pady=(y / 100))
     size3.grid(row=1, column=1, sticky=NSEW, pady=(y / 100))

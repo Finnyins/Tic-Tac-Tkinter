@@ -194,7 +194,7 @@ def generateboard(l, h):  # function that is used to collect the user's input an
     return board
 
 
-def generateboardvals():  # function that gathers the player's input to generate the board with.
+def generateboardvals(mode):  # function that gathers the player's input to generate the board with.
     clearscreen()
     global menu
     menu.destroy()
@@ -251,8 +251,8 @@ footer.config(bg="white")
 menu.update()
 titletext = Label(header, bg="white", fg="snow4", text="Tic-Tac-Tkinter", font=("Franklin Gothic", 25))
 titletext.pack(side="bottom", anchor="center", pady=(y/5))
-single = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Singleplayer", command=generateboardvals)
-multi = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Multiplayer")
+single = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Singleplayer", command=lambda: generateboardvals("single"))
+multi = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Multiplayer", command=lambda: generateboardvals("multi"))
 options = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Options")
 quit = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Quit Game")
 single.grid(row=0, column=1, sticky=NS+W, pady=(y/100))

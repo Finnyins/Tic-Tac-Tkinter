@@ -4,7 +4,6 @@
 
 from tkinter import *
 
-
 def clearscreen():
     _list = mw.winfo_children()
     for item in _list:
@@ -34,38 +33,9 @@ def display_board(board):  # function that displays the board
 # print("| " + board[6] + " | " + board[7] + " | " + board[8] + " |")
 # print("+---+---+---+")
 
-def enter_move(board):  # function that registers the player's move and assigns it to the board.
-    moved = 0
-    while moved == 0:
-        loop = 1
-        while loop == 1:
-            row = input("Please input the row of the tile you wish to claim: ")
-            try:
-                row = int(row) - 1
-                if row > len(board) - 1:
-                    print("That is not a valid row.")
-                else:
-                    loop = 0
-            except ValueError:
-                print("Please input a valid whole number.")
-        loop = 1
-        while loop == 1:
-            move = input("Please input the number of the tile you wish to claim on the row: ")
-            try:
-                move = int(move)
-                if move > len(board[0]) - 1:
-                    print("That is not a valid tile.")
-                else:
-                    loop = 0
-            except ValueError:
-                print("Please input a valid whole number.")
-
-        if board[row][move] == "X" or board[row][move] == "O":
-            print("Slot already taken. please try a different slot")
-        else:
-            board[row][move] = "O"
-            moved = 1
-            return board
+def enter_move(board, num):  # function that registers the player's move and assigns it to the board.
+    board.buttons[num].config(text="O")
+    board.buttons[num]["state"] = "disabled"
 
 
 def freeslots(board):  # unused function. was intended to be used for the CPU player, but wasn't needed.
@@ -166,12 +136,15 @@ def draw_move(board):  # Makes a random move for the CPU player
     return board
 
 
-def playgame(
-        board):  # function that runs the game, calling each of the methods when they are needed. The "skeleton" of the game.
+def playgame(board):  # function that runs the game, calling each of the methods when they are needed. The "skeleton" of the game.
+    board.pack(anchor="center", expand=True)
+    footer.pack(side="bottom", expand=False)
+    footertext = Label(footer, font=("Franklin Gothic", 25), bg="white", fg="snow4")
+    footertext.pack(anchor="center")
     game = "continue"
     display_board(board)
     while game != "end":
-        print("Computer's turn")
+        footertext.config(text="Computer's Turn.")
         board = draw_move(board)
         display_board(board)
         game = victory_for(board, "X")
@@ -186,13 +159,25 @@ def playgame(
 def generateboard(s, mode):  # function that is used to collect the user's input and generate a game board using it
     global x
     global y
-    board = Frame(mw, width=x, height=(y * 0.6))
-    for x in range(0, (s-1)):
-        board.rowconfigure(x, weight=1)
-        board.columnconfigure(x, weight=1)
-    for x in range(0, (s-1)):
-        pass
     global board
+    clearscreen()
+    board = Frame(mw, width=x, height=(y * 0.6))
+    board.pack(anchor="center", expand=True)
+    footer.pack(side="bottom", expand=False)
+    board.buttons = []
+    for v in range(0, (s-1)):
+        board.rowconfigure(v, weight=1)
+        board.columnconfigure(v, weight=1)
+    z = 0
+    y = 0
+    for m in range(0, s*s):
+        board.buttons.append(Button(board, text=m+1, bg="ivory4", fg="white", font=("Franklin Gothic", 25), command=lambda m=m: enter_move(board, m)))
+        board.buttons[m].grid(row=z, column=y, sticky=NSEW)
+        board.buttons[m].update()
+        y += 1
+        if y == s:
+            y = 0
+            z += 1
     board = board
 
 
@@ -204,9 +189,9 @@ def generateboardvals(mode):  # function that gathers the player's input to gene
     global x
     global y
     menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
-    for x in range(0, 3):
-        menu.rowconfigure(x, weight=1)
-        menu.columnconfigure(x, weight=1)
+    for v in range(0, 4):
+        menu.rowconfigure(v, weight=1)
+        menu.columnconfigure(v, weight=1)
     header.pack(side="top", expand=False)
     menu.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)

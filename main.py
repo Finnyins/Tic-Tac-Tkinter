@@ -3,6 +3,7 @@
 # 8/18/2021
 
 from tkinter import *
+import time
 
 def clearscreen():
     _list = mw.winfo_children()
@@ -10,19 +11,6 @@ def clearscreen():
         if item.winfo_children():
             item.pack_forget()
 
-def display_board(board):  # function that displays the board
-    g = len(board[0])
-    for h in range(0, len(board)):
-        print("+", end="")
-        for l in range(0, g):
-            print("---+", end="")
-        print("")
-        for l in range(0, g):
-            print("| " + board[h][l] + " ", end="")
-        print("|")
-    print("+", end="")
-    for l in board[0]:
-        print("---+", end="")
 
 
 # print("+---+---+---+")
@@ -34,8 +22,12 @@ def display_board(board):  # function that displays the board
 # print("+---+---+---+")
 
 def enter_move(board, num):  # function that registers the player's move and assigns it to the board.
+    global contin
     board.buttons[num].config(text="O")
     board.buttons[num]["state"] = "disabled"
+    for button in board.buttons:
+        button["state"] = "disabled"
+    contin = True
 
 
 def freeslots(board):  # unused function. was intended to be used for the CPU player, but wasn't needed.
@@ -136,24 +128,21 @@ def draw_move(board):  # Makes a random move for the CPU player
     return board
 
 
-def playgame(board):  # function that runs the game, calling each of the methods when they are needed. The "skeleton" of the game.
+def playgame(board, mode):  # function that runs the game, calling each of the methods when they are needed. The "skeleton" of the game.
     board.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)
     footertext = Label(footer, font=("Franklin Gothic", 25), bg="white", fg="snow4")
     footertext.pack(anchor="center")
+    footer.pack_propagate(False)
     game = "continue"
-    display_board(board)
     while game != "end":
         footertext.config(text="Computer's Turn.")
-        board = draw_move(board)
-        display_board(board)
-        game = victory_for(board, "X")
         if game == "end":
             break
-        print("Your Turn")
-        board = enter_move(board)
-        display_board(board)
-        game = victory_for(board, "O")
+        contin = False
+        footertext.config(text="Your Turn")
+        for x in board.buttons:
+            x["state"] = "normal"
 
 
 def generateboard(s, mode):  # function that is used to collect the user's input and generate a game board using it
@@ -171,7 +160,7 @@ def generateboard(s, mode):  # function that is used to collect the user's input
     z = 0
     y = 0
     for m in range(0, s*s):
-        board.buttons.append(Button(board, text=m+1, bg="ivory4", fg="white", font=("Franklin Gothic", 25), command=lambda m=m: enter_move(board, m)))
+        board.buttons.append(Button(board, text=m+1, bg="ivory4", fg="white", font=("Franklin Gothic", 25), command=lambda m=m: enter_move(board, m), state="disabled"))
         board.buttons[m].grid(row=z, column=y, sticky=NSEW)
         board.buttons[m].update()
         y += 1
@@ -179,6 +168,7 @@ def generateboard(s, mode):  # function that is used to collect the user's input
             y = 0
             z += 1
     board = board
+    playgame(board, mode)
 
 
 

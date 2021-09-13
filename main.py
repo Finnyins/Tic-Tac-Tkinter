@@ -3,7 +3,20 @@
 # 8/18/2021
 
 from tkinter import *
-import time
+from threading import *
+import _thread
+
+
+
+class start(Thread):
+    def __init__(self, mw, header, footer, board, mode):
+        self.mw = mw
+        self.header = header
+        self.footer = footer
+        self.board = board
+        self.mode = mode
+        playgame(board, mode)
+
 
 def clearscreen():
     _list = mw.winfo_children()
@@ -23,11 +36,15 @@ def clearscreen():
 
 def enter_move(board, num):  # function that registers the player's move and assigns it to the board.
     global contin
-    board.buttons[num].config(text="O")
+    global plr
+    if plr == 1:
+        board.buttons[num].config(text="O")
+    if plr == 2:
+        board.buttons[num].config(text="X")
     board.buttons[num]["state"] = "disabled"
     for button in board.buttons:
         button["state"] = "disabled"
-    contin = True
+    contin.set(True)
 
 
 def freeslots(board):  # unused function. was intended to be used for the CPU player, but wasn't needed.
@@ -131,18 +148,45 @@ def draw_move(board):  # Makes a random move for the CPU player
 def playgame(board, mode):  # function that runs the game, calling each of the methods when they are needed. The "skeleton" of the game.
     board.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)
-    footertext = Label(footer, font=("Franklin Gothic", 25), bg="white", fg="snow4")
-    footertext.pack(anchor="center")
+    footer.config(bg="grey40")
     footer.pack_propagate(False)
+    footertext = Label(footer, font=("Franklin Gothic", 25), bg="grey40", fg="white")
+    footertext.pack(anchor="center")
+    footer.update()
+    global plr
+    global contin
+    contin = BooleanVar()
+    plr = 1
     game = "continue"
     while game != "end":
-        footertext.config(text="Computer's Turn.")
-        if game == "end":
-            break
-        contin = False
-        footertext.config(text="Your Turn")
-        for x in board.buttons:
-            x["state"] = "normal"
+        if mode == "multi":
+            plr = 1
+            footertext.config(text="Player 1's Turn.")
+            footertext.update()
+            for x in board.buttons:
+                if x["text"] != "X" and x["text"] != "O":
+                    x["state"] = "normal"
+            contin.set(False)
+            board.wait_variable(contin)
+            plr = 2
+            footertext.config(text="Player 2's Turn.")
+            footertext.update()
+            for x in board.buttons:
+                if x["text"] != "X" and x["text"] != "O":
+                    x["state"] = "normal"
+            contin.set(False)
+            board.wait_variable(contin)
+        else:
+            footertext.config(text="Computer's Turn.")
+            footertext.update()
+            if game == "end":
+                break
+            contin.set(False)
+            footertext.config(text="Your Turn")
+            footertext.update()
+            for x in board.buttons:
+                if x["text"] != "X" and x["text"] != "O":
+                    x["state"] = "normal"
 
 
 def generateboard(s, mode):  # function that is used to collect the user's input and generate a game board using it
@@ -168,7 +212,7 @@ def generateboard(s, mode):  # function that is used to collect the user's input
             y = 0
             z += 1
     board = board
-    playgame(board, mode)
+    _thread.start_new_thread(start, (mw, header, footer, board, mode))
 
 
 

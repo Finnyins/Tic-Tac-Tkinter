@@ -98,21 +98,38 @@ class start(Thread):
         self.mode = mode
         playgame(board, mode)
 
+class wait(Thread):
+    def __init__(self, tm):
+        self.tm = tm
+        pause(tm)
 
+def pause(tm):
+    time.sleep(tm)
 
 def clearscreen():
     _list = mw.winfo_children()
     for item in _list:
+        for child in item.winfo_children():
+            child.forget()
         if item.winfo_children():
             item.pack_forget()
 
-def playgain():
+def playagain(mode):
     clearscreen()
+    header = Frame(mw, bg="lightsteelblue4", width=x, height=(y * 0.15))
     header.pack(side="top", expand=False)
     menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
+    for v in range(0, 4):
+        menu.rowconfigure(v, weight=1)
+        menu.columnconfigure(v, weight=1)
     menu.pack(anchor="center", expand=True)
     text = Label(header, bg="white", fg="ivory4", text="Would you like to play again?", font=("Franklin Gothic", 25))
     text.pack(anchor="center")
+    yes = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Again", command=lambda: generateboardvals(mode))
+    no = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="No", command=lambda: main())
+    yes.grid(row=0, column=1, sticky=NSEW)
+    no.grid(row=0, column=2, sticky=NSEW)
+
 
 
 
@@ -195,6 +212,8 @@ def victory_for(board, a, mode):  # win checker
                 footertext.config(text="Game Over. Player 1 Wins.")
             else:
                 footertext.config(text="Game Won. Congratulations!")
+        mw.update()
+        time.sleep(5)
         return "end"
 
     else:
@@ -204,6 +223,8 @@ def victory_for(board, a, mode):  # win checker
                 numlist.append(x["text"])
         if len(numlist) == 0:
             footertext.config(text="Draw. Everyone loses.")
+            mw.update()
+            time.sleep(5)
             return "end"
         else:
             return "cont"
@@ -234,7 +255,6 @@ def playgame(board, mode):  # function that runs the game, calling each of the m
                     x["state"] = "normal"
             contin.set(False)
             board.wait_variable(contin)
-            time.sleep(1)
             game = victory_for(board, "O", mode)
             if game == "end":
                 break
@@ -246,7 +266,6 @@ def playgame(board, mode):  # function that runs the game, calling each of the m
                     x["state"] = "normal"
             contin.set(False)
             board.wait_variable(contin)
-            time.sleep(1)
             game = victory_for(board, "X", mode)
             if game == "end":
                 break
@@ -267,6 +286,8 @@ def playgame(board, mode):  # function that runs the game, calling each of the m
             contin.set(False)
             board.wait_variable(contin)
             game = victory_for(board, "O", mode)
+            if game == "end":
+                break
 
 
 
@@ -296,7 +317,7 @@ def generateboard(s, mode):  # function that is used to collect the user's input
     t = Thread(target=start(mw, header, footer, board, mode))
     t.start()
     t.join()
-    main()
+    playagain(mode)
 
 
 def generateboardvals(mode):  # function that gathers the player's input to generate the board with.
@@ -327,13 +348,6 @@ def generateboardvals(mode):  # function that gathers the player's input to gene
 
 def main():
     # main menu segment. Nothing particularly special here.
-    global mw
-    mw = Tk()
-    mw.config(bg="white")
-    mw.geometry("1280x720")
-    mw.minsize(1280, 720)
-    mw.title("Tic-Tac-Tkinter Version Pre-Alpha 0.1")
-    mw.update()
     clearscreen()
     loop = 1
     played = 0
@@ -374,5 +388,12 @@ def main():
     mw.mainloop()
 
 if __name__ == "__main__":
+    global mw
+    mw = Tk()
+    mw.config(bg="white")
+    mw.geometry("1280x720")
+    mw.minsize(1280, 720)
+    mw.title("Tic-Tac-Tkinter Version Pre-Alpha 0.1")
+    mw.update()
     main()
 

@@ -4,7 +4,7 @@
 
 from tkinter import *
 from threading import *
-import _thread
+from tkinter import messagebox
 import time
 
 
@@ -87,6 +87,14 @@ def draw_move(board):  # Makes a random move for the CPU player
         move["text"] = "X"
         compmoved = 1
     return board
+
+
+def quit(event):
+    quitbox = messagebox.askquestion("Exit", "Are you sure you would like to exit?", icon="warning")
+    if quitbox == "yes":
+        exit()
+    else:
+        return
 
 
 class start(Thread):
@@ -345,6 +353,14 @@ def generateboardvals(mode):  # function that gathers the player's input to gene
     size3.grid(row=1, column=1, sticky=NSEW, pady=(y / 100))
     size4.grid(row=1, column=2, sticky=NSEW, pady=(y / 100))
 
+def full(event):
+    global fl
+    if fl == False:
+        mw.attributes("-fullscreen", True)
+        fl = True
+    elif fl == True:
+        mw.attributes("-fullscreen", False)
+        fl = False
 
 def main():
     # main menu segment. Nothing particularly special here.
@@ -355,6 +371,7 @@ def main():
     win2 = 0
     global x
     global y
+    global fl
     x = mw.winfo_screenwidth()
     y = mw.winfo_screenheight()
     global header
@@ -378,11 +395,13 @@ def main():
     single = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Singleplayer", command=lambda: generateboardvals("single"))
     multi = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Multiplayer", command=lambda: generateboardvals("multi"))
     options = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Options")
-    quit = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Quit Game")
+    quitbutton = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Quit Game", command=lambda: quit(0))
     single.grid(row=0, column=1, sticky=NS+W, pady=(y/100))
     multi.grid(row=0, column=2, sticky=NS+E, pady=(y/100))
     options.grid(row=1, column=1, sticky=NS+W, pady=(y/100))
-    quit.grid(row=1, column=2, sticky=NS+E, pady=(y/100))
+    quitbutton.grid(row=1, column=2, sticky=NS+E, pady=(y/100))
+    mw.bind("<Escape>", quit)
+    mw.bind("<F11>", full)
 
 
     mw.mainloop()

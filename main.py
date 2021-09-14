@@ -324,13 +324,16 @@ def main():
     win2 = 0
     global fl
     fl = False
+    global x
+    global y
     x = mw.winfo_screenwidth()
     y = mw.winfo_screenheight()
     mw.config(bg="white")
+    global header
     header = Frame(mw, bg="lightsteelblue4", width=x, height=(y * 0.15))
+    global menu
     menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
-    for b in menu.winfo_children():
-        b.destroy()
+    global footer
     footer = Frame(mw, bg="grey40", width=x, height=(y * 0.15))
     for k in range(0, 3):
         menu.rowconfigure(k, weight=1)

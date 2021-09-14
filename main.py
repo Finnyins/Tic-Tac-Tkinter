@@ -8,72 +8,6 @@ from tkinter import messagebox
 import time
 
 
-def placeholder():
-    sign = ""
-    win = False
-    g = len(main[0])
-    # checks for horizontal win
-    for x in range(0, len(board)):
-        if board[x][0] == a:
-            if all(element == board[x][0] for element in board[x]):
-                win = True
-                sign = board[x][0]
-                break
-    # checks for vertical win
-    for y in range(0, g):
-        if board[0][y] == a:
-            if all(element[y] == board[0][y] for element in board):
-                win = True
-                sign = board[0][y]
-                break
-    # checks for diagonal win
-    if len(board[0]) == len(
-            board):  # checks if board length and width are equal, as diagonals only work on square boards
-        if board[0][0] == a:
-            diag = []
-            number = 0
-            for x in range(0, len(board)):
-                if board[number][number] == a:
-                    diag.append(board[number][number])
-                number += 1
-            if len(diag) == len(board):
-                win = True
-                sign = board[0][0]
-        if board[0][-1] == a:
-            diag = []
-            number = 0
-            num2 = -1
-            for x in range(0, len(board)):
-                if board[number][num2] == a:
-                    diag.append(board[number][num2])
-                number += 1
-                num2 -= 1
-            if len(diag) == len(board):
-                win = True
-                sign = board[0][-1]
-
-    if win == True:
-        if sign == "X":
-            print("Game Over. The computer wins.")
-            return "end"
-
-        elif sign == "O":
-            print("Game Won. Congratulations!")
-            return "end"
-
-    else:
-        numlist = []
-        for h in range(0, len(board)):
-            for z in board[h]:
-                if z.isnumeric():
-                    numlist.append(z)
-        if len(numlist) == 0:
-            print("Draw. Everyone loses.")
-            return "end"
-
-        else:
-            return "cont"
-
 
 def draw_move(board):  # Makes a random move for the CPU player
     from random import choice
@@ -92,12 +26,13 @@ def draw_move(board):  # Makes a random move for the CPU player
 def quit(event):
     quitbox = messagebox.askquestion("Exit", "Are you sure you would like to exit?", icon="warning")
     if quitbox == "yes":
+        mw.destroy()
         exit()
     else:
         return
 
 
-class start(Thread):
+class begin(Thread):
     def __init__(self, mw, header, footer, board, mode):
         self.mw = mw
         self.header = header
@@ -118,7 +53,7 @@ def clearscreen():
     _list = mw.winfo_children()
     for item in _list:
         for child in item.winfo_children():
-            child.forget()
+            child.pack_forget()
         if item.winfo_children():
             item.pack_forget()
 
@@ -240,6 +175,7 @@ def victory_for(board, a, mode):  # win checker
 
 
 def playgame(board, mode):  # function that runs the game, calling each of the methods when they are needed. The "skeleton" of the game.
+    clearscreen()
     board.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)
     footer.config(bg="grey40")
@@ -304,7 +240,8 @@ def generateboard(s, mode):  # function that is used to collect the user's input
     global y
     global board
     clearscreen()
-    board = Frame(mw, width=x, height=(y * 0.6))
+    board = Frame(mw, width=x, height=(y * 0.6), name="board")
+    mw.nametowidget(".board")
     board.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)
     board.buttons = []
@@ -322,7 +259,7 @@ def generateboard(s, mode):  # function that is used to collect the user's input
             y = 0
             z += 1
     board = board
-    t = Thread(target=start(mw, header, footer, board, mode))
+    t = Thread(target=begin(mw, header, footer, board, mode))
     t.start()
     t.join()
     playagain(mode)
@@ -330,18 +267,13 @@ def generateboard(s, mode):  # function that is used to collect the user's input
 
 def generateboardvals(mode):  # function that gathers the player's input to generate the board with.
     clearscreen()
-    global menu
-    menu.destroy()
     global x
     global y
-    menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
-    for v in range(0, 4):
-        menu.rowconfigure(v, weight=1)
-        menu.columnconfigure(v, weight=1)
     header.pack(side="top", expand=False)
     menu.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)
-    titletext.destroy()
+    header.config(bg="white")
+    footer.config(bg="white")
     text = Label(header, text="Select Board Size", font=("Franklin Gothic", 25), bg="white", fg="snow4")
     text.pack(side="bottom", anchor="center", pady=(y / 5))
     size1 = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="3x3", command=lambda: generateboard(3, mode))
@@ -362,6 +294,27 @@ def full(event):
         mw.attributes("-fullscreen", False)
         fl = False
 
+def options():
+    clearscreen()
+    mw.update()
+    global fl
+    x = mw.winfo_screenwidth()
+    y = mw.winfo_screenheight()
+    header = Frame(mw, bg="white", width=x, height=(y * 0.15))
+    header.pack(side="top", expand=False)
+    menu2 = Frame(mw, bg="white", width=x, height=(y * 0.6))
+    for v in range(0, 3):
+        menu2.rowconfigure(v, weight=1)
+        menu2.columnconfigure(v, weight=1)
+    menu2.pack(anchor="center", expand=True)
+    titletext = Label(header, bg="white", fg="snow4", text="Options", font=("Franklin Gothic", 25))
+    titletext.pack(side="bottom", anchor="center", pady=(y / 5))
+    titletext.config(text="Options")
+    fll = Button(menu2, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Toggle Fullscreen", command=lambda: full(0))
+    bck = Button(menu2, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Back", command=main)
+    fll.grid(row=0, column=2, sticky=NS)
+    bck.grid(row=1, column=2, sticky=NS)
+
 def main():
     # main menu segment. Nothing particularly special here.
     clearscreen()
@@ -369,37 +322,36 @@ def main():
     played = 0
     win1 = 0
     win2 = 0
-    global x
-    global y
     global fl
+    fl = False
     x = mw.winfo_screenwidth()
     y = mw.winfo_screenheight()
-    global header
+    mw.config(bg="white")
     header = Frame(mw, bg="lightsteelblue4", width=x, height=(y * 0.15))
-    global menu
     menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
-    global footer
+    for b in menu.winfo_children():
+        b.destroy()
     footer = Frame(mw, bg="grey40", width=x, height=(y * 0.15))
-    for x in range(0, 3):
-        menu.rowconfigure(x, weight=1)
-        menu.columnconfigure(x, weight=1)
+    for k in range(0, 3):
+        menu.rowconfigure(k, weight=1)
+        menu.columnconfigure(k, weight=1)
     header.pack(side="top", expand=False)
-    menu.pack(anchor="center", expand=True)
+    menu.pack(anchor="center", expand=False)
     footer.pack(side="bottom", expand=False)
     header.config(bg="white")
     footer.config(bg="white")
-    menu.update()
     global titletext
     titletext = Label(header, bg="white", fg="snow4", text="Tic-Tac-Tkinter", font=("Franklin Gothic", 25))
     titletext.pack(side="bottom", anchor="center", pady=(y/5))
     single = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Singleplayer", command=lambda: generateboardvals("single"))
     multi = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Multiplayer", command=lambda: generateboardvals("multi"))
-    options = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Options")
+    option = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Options", command=options)
     quitbutton = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Quit Game", command=lambda: quit(0))
     single.grid(row=0, column=1, sticky=NS+W, pady=(y/100))
     multi.grid(row=0, column=2, sticky=NS+E, pady=(y/100))
-    options.grid(row=1, column=1, sticky=NS+W, pady=(y/100))
+    option.grid(row=1, column=1, sticky=NS+W, pady=(y/100))
     quitbutton.grid(row=1, column=2, sticky=NS+E, pady=(y/100))
+    mw.update()
     mw.bind("<Escape>", quit)
     mw.bind("<F11>", full)
 
@@ -407,12 +359,10 @@ def main():
     mw.mainloop()
 
 if __name__ == "__main__":
-    global mw
     mw = Tk()
-    mw.config(bg="white")
     mw.geometry("1280x720")
     mw.minsize(1280, 720)
-    mw.title("Tic-Tac-Tkinter Version Pre-Alpha 0.1")
+    mw.title("Tic-Tac-Tkinter Version 1.1")
     mw.update()
     main()
 

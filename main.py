@@ -10,17 +10,17 @@ import time
 
 
 def draw_move(board):  # Makes a random move for the CPU player
-    from random import choice
-    compmoved = 0
-    free = []
-    for x in board.buttons:
+    from random import choice # imports random choice function
+    compmoved = 0 # variable to determine whether CPU has moved or not
+    free = [] # creating list that will contain all empty slots on the board
+    for x in board.buttons: # gathering all slots that haven't been claimed and adding them to the "free" list
         if x["text"] != "X" and x["text"] != "O":
             free.append(x)
     while compmoved != 1:
-        move = choice(free)
-        move["text"] = "X"
+        move = choice(free) # picking a random entry from the list of free slots
+        move["text"] = "X" # claiming the randomly chosen free tile
         compmoved = 1
-    return board
+    return board # returning the updated board with the CPU's chosen move to the main game function
 
 
 def quit(event):
@@ -32,7 +32,7 @@ def quit(event):
         return
 
 
-class begin(Thread):
+class begin(Thread): # don't worry about this. this is unused
     def __init__(self, mw, header, footer, board, mode):
         self.mw = mw
         self.header = header
@@ -41,15 +41,15 @@ class begin(Thread):
         self.mode = mode
         playgame(board, mode)
 
-class wait(Thread):
+class wait(Thread): # don't worry about this. it's also unused
     def __init__(self, tm):
         self.tm = tm
         pause(tm)
 
-def pause(tm):
+def pause(tm): # unused as well
     time.sleep(tm)
 
-def clearscreen():
+def clearscreen(): # basic clearscreen function
     _list = mw.winfo_children()
     for item in _list:
         for child in item.winfo_children():
@@ -57,7 +57,7 @@ def clearscreen():
         if item.winfo_children():
             item.pack_forget()
 
-def playagain(mode):
+def playagain(mode): # function to ask if the player wants to play again. no particularly special code in here
     clearscreen()
     header = Frame(mw, bg="lightsteelblue4", width=x, height=(y * 0.15))
     header.pack(side="top", expand=False)
@@ -77,16 +77,17 @@ def playagain(mode):
 
 
 def enter_move(board, num):  # function that registers the player's move and assigns it to the board.
-    global contin
+    global contin # initializes the global plr and contin variables
     global plr
-    if plr == 1:
+    if plr == 1: # claims the chosen button with an "O" if it's player 1's turn
         board.buttons[num].config(text="O")
-    if plr == 2:
+    if plr == 2: # claims the chosen button with an "X" if it's player 2's turn
         board.buttons[num].config(text="X")
-    board.buttons[num]["state"] = "disabled"
-    for button in board.buttons:
+    board.buttons[num]["state"] = "disabled" # disables the chosen button
+    for button in board.buttons: # disables all buttons on the board so the player cannot pick more than one
         button["state"] = "disabled"
-    contin.set(True)
+    contin.set(True) # sets the contin variable to true, indicating to the "playgame" function that the current player
+                     # has taken their turn
 
 
 def victory_for(board, a, mode):  # win checker
@@ -176,7 +177,7 @@ def victory_for(board, a, mode):  # win checker
 
 def playgame(board, mode):  # function that runs the game, calling each of the methods when they are needed. The "skeleton" of the game.
     clearscreen()
-    board.pack(anchor="center", expand=True)
+    board.pack(anchor="center", expand=True) # placing the board and all other menu items on screen.
     footer.pack(side="bottom", expand=False)
     footer.config(bg="grey40")
     footer.pack_propagate(False)
@@ -184,53 +185,55 @@ def playgame(board, mode):  # function that runs the game, calling each of the m
     footertext = Label(footer, font=("Franklin Gothic", 25), bg="grey40", fg="white")
     footertext.pack(anchor="center")
     footer.update()
-    global plr
+    global plr # making plr and contin global is necessary for use in multiple functions
     global contin
-    contin = BooleanVar()
-    plr = 1
-    game = "continue"
-    while game != "end":
-        if mode == "multi":
-            plr = 1
+    contin = BooleanVar() # setting a variable for later use to determine when a player's turn has ended
+    plr = 1 # setting the current player, to tell the game which sign should be used for the next move
+    game = "continue" # setting the loop variable
+    while game != "end": # setting the loop
+        if mode == "multi": # code that runs only if multiplayer is enabled
+            plr = 1 # setting the player to 1 again because it's running inside of the loop
             footertext.config(text="Player 1's Turn.")
             footertext.update()
-            for x in board.buttons:
+            for x in board.buttons: # reactivating all buttons on the board that haven't already been claimed by X or O
                 if x["text"] != "X" and x["text"] != "O":
-                    x["state"] = "normal"
-            contin.set(False)
-            board.wait_variable(contin)
-            game = victory_for(board, "O", mode)
-            if game == "end":
-                break
-            plr = 2
+                    x["state"] = "normal" # reactivates buttons
+            contin.set(False) # sets contin variable to false
+            board.wait_variable(contin) # waits until the continue variable is changed by the "enter_move" function
+            game = victory_for(board, "O", mode) # calls victory function to check whether the player using "O" has won
+            if game == "end": # terminates the loop if the victory function sets the game variable to "end",
+                break         # signifying that a player has won
+            plr = 2 # sets player variable to 2, indicating that the second player is taking their turn
             footertext.config(text="Player 2's Turn.")
             footertext.update()
-            for x in board.buttons:
+            for x in board.buttons: # reactivating all unclaimed buttons
                 if x["text"] != "X" and x["text"] != "O":
                     x["state"] = "normal"
-            contin.set(False)
-            board.wait_variable(contin)
-            game = victory_for(board, "X", mode)
-            if game == "end":
+            contin.set(False) # setting the contin variable to false again
+            board.wait_variable(contin) # waiting until "enter_move" function is called again and sets contin to true
+            game = victory_for(board, "X", mode) # sets the game variable to the value returned by victory function
+            if game == "end": # ends loop if victory function returns "end"
                 break
-        else:
+        else: # this code runs if the game mode is set to singleplayer
+            # CPU uses X's and Player uses O's btw
             footertext.config(text="Computer's Turn.")
             footertext.update()
-            time.sleep(2)
-            draw_move(board)
-            game = victory_for(board, "X", mode)
-            if game == "end":
+            time.sleep(2) # simple wait command
+            draw_move(board) # runs the function to generate the CPU's move on an empty tile
+            game = victory_for(board, "X", mode) # checks to see if the player using X's (the CPU) has won
+            if game == "end": # ends the game if the CPU has won
                 break
-            contin.set(False)
+            contin.set(False) # sets contin variable to False again
             footertext.config(text="Your Turn")
             footertext.update()
-            for x in board.buttons:
+            for x in board.buttons: # reactivates any buttons that don't have an X or O already on them
                 if x["text"] != "X" and x["text"] != "O":
                     x["state"] = "normal"
-            contin.set(False)
-            board.wait_variable(contin)
-            game = victory_for(board, "O", mode)
-            if game == "end":
+            contin.set(False) # sets contin variable to false again for some reason. this line of code is unnecessary
+            board.wait_variable(contin) # waits until the contin variable is set back to true after the player moves
+            game = victory_for(board, "O", mode) # checks if player won
+            if game == "end": # terminates loop if player wins, if not the program goes back to the beginning of the
+                              # [while game != "end":] loop
                 break
 
 

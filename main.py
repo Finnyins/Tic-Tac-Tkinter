@@ -259,7 +259,7 @@ def generateboard(s, mode):  # function that is used to collect the user's input
             y = 0
             z += 1
     board = board
-    t = Thread(target=begin(mw, header, footer, board, mode))
+    t = Thread(target=playgame(board, mode))
     t.start()
     t.join()
     playagain(mode)

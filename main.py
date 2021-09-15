@@ -270,8 +270,12 @@ def generateboardvals(mode):  # function that gathers the player's input to gene
     global x
     global y
     header.pack(side="top", expand=False)
+    menu = Frame(mw, bg="white", width=x, height=(y * 0.6))
     menu.pack(anchor="center", expand=True)
     footer.pack(side="bottom", expand=False)
+    for k in range(0, 3):
+        menu.rowconfigure(k, weight=1)
+        menu.columnconfigure(k, weight=1)
     header.config(bg="white")
     footer.config(bg="white")
     text = Label(header, text="Select Board Size", font=("Franklin Gothic", 25), bg="white", fg="snow4")
@@ -298,6 +302,8 @@ def options():
     clearscreen()
     mw.update()
     global fl
+    global footer
+    footer.destroy()
     x = mw.winfo_screenwidth()
     y = mw.winfo_screenheight()
     header = Frame(mw, bg="white", width=x, height=(y * 0.15))
@@ -310,18 +316,14 @@ def options():
     titletext = Label(header, bg="white", fg="snow4", text="Options", font=("Franklin Gothic", 25))
     titletext.pack(side="bottom", anchor="center", pady=(y / 5))
     titletext.config(text="Options")
-    fll = Button(menu2, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Toggle Fullscreen", command=lambda: full(0))
+    fll = Button(menu2, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Toggle Fullscreen", command=lambda:full(0))
     bck = Button(menu2, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Back", command=main)
-    fll.grid(row=0, column=2, sticky=NS)
-    bck.grid(row=1, column=2, sticky=NS)
+    fll.grid(row=0, column=2)
+    bck.grid(row=1, column=2)
 
 def main():
     # main menu segment. Nothing particularly special here.
     clearscreen()
-    loop = 1
-    played = 0
-    win1 = 0
-    win2 = 0
     global fl
     fl = False
     global x
@@ -350,11 +352,12 @@ def main():
     multi = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Play Multiplayer", command=lambda: generateboardvals("multi"))
     option = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Options", command=options)
     quitbutton = Button(menu, bg="ivory4", fg="white", font=("Franklin Gothic", 25), text="Quit Game", command=lambda: quit(0))
-    single.grid(row=0, column=1, sticky=NS+W, pady=(y/100))
-    multi.grid(row=0, column=2, sticky=NS+E, pady=(y/100))
-    option.grid(row=1, column=1, sticky=NS+W, pady=(y/100))
-    quitbutton.grid(row=1, column=2, sticky=NS+E, pady=(y/100))
+    single.grid(row=0, column=1, sticky=NS+W)
+    multi.grid(row=0, column=2, sticky=NS+E)
+    option.grid(row=1, column=1, sticky=NS+W)
+    quitbutton.grid(row=1, column=2, sticky=NS+E)
     mw.update()
+    menu.update()
     mw.bind("<Escape>", quit)
     mw.bind("<F11>", full)
 

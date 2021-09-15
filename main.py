@@ -106,14 +106,12 @@ def victory_for(board, a, mode):  # win checker
     sign = ""
     win = False
     g = len(main[0])
-    # checks for horizontal win
     for x in range(0, len(main)):
         if main[x][0] == a:
             if all(element == main[x][0] for element in main[x]):
                 win = True
                 sign = main[x][0]
                 break
-    # checks for vertical win
     for y in range(0, g):
         if main[0][y] == a:
             if all(element[y] == main[0][y] for element in main):

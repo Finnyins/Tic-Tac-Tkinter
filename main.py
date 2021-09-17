@@ -3,8 +3,8 @@
 # 8/18/2021
 
 from tkinter import *
-from threading import *
 from tkinter import messagebox
+from threading import *
 import time
 
 
@@ -32,22 +32,6 @@ def quit(event):
         return
 
 
-class begin(Thread): # don't worry about this. this is unused
-    def __init__(self, mw, header, footer, board, mode):
-        self.mw = mw
-        self.header = header
-        self.footer = footer
-        self.board = board
-        self.mode = mode
-        playgame(board, mode)
-
-class wait(Thread): # don't worry about this. it's also unused
-    def __init__(self, tm):
-        self.tm = tm
-        pause(tm)
-
-def pause(tm): # unused as well
-    time.sleep(tm)
 
 def clearscreen(): # basic clearscreen function
     _list = mw.winfo_children()

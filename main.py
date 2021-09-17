@@ -372,4 +372,3 @@ if __name__ == "__main__":
     mw.title("Tic-Tac-Tkinter Version 1.1")
     mw.update()
     main()
-
